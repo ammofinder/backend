@@ -13,6 +13,7 @@ Supported stores:
 - DixiePomerania
 - GardaArms
 - Rusznikarnia
+- Arel
 
 # Setup
 
