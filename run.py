@@ -1,5 +1,4 @@
-from scrappers import dixiepomerania, gardaarms, rusznikarnia
-from utils.common import push_to_database
+from scrappers import dixiepomerania, gardaarms, rusznikarnia, arel
 
 import logging, io, sys
 
@@ -26,5 +25,6 @@ if __name__ == '__main__':
     dixiepomerania.run()
     gardaarms.run()
     rusznikarnia.run()
+    arel.run()
     
     log.info('Finished!')
