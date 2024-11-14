@@ -1,4 +1,4 @@
-from scrappers import dixiepomerania, gardaarms, rusznikarnia, arel
+from scrappers import dixiepomerania, gardaarms, rusznikarnia, arel, tarcza
 
 import logging, io, sys
 
@@ -26,5 +26,6 @@ if __name__ == '__main__':
     gardaarms.run()
     rusznikarnia.run()
     arel.run()
+    tarcza.run()
     
     log.info('Finished!')
