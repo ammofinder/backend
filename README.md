@@ -14,6 +14,7 @@ Supported stores:
 - GardaArms
 - Rusznikarnia
 - Arel
+- Tarcza
 
 # Setup
 
