@@ -1,8 +1,7 @@
-import requests
 import logging
 from bs4 import BeautifulSoup
 
-from utils.common import push_to_database
+from utils.common import push_to_database, fetch_data
 
 log = logging.getLogger('Arel')
 
@@ -25,7 +24,7 @@ def scrapper():
     
     accepted_calibers = ['9x19', '.223', '22LR', '22 lr', '.22 LR', 'kal.22', '7,62x39']
     
-    response = requests.get(base_url)
+    response = fetch_data(base_url)
     if response.status_code == 200:
         soup = BeautifulSoup(response.text, 'html.parser')
         number_of_pages = get_number_of_pages(soup)
@@ -33,7 +32,7 @@ def scrapper():
 
     for page in range(1, number_of_pages + 1):
         url = f'{base_url}/{page}'
-        response = requests.get(url)
+        response = fetch_data(url)
         
         if response.status_code == 200:
             soup = BeautifulSoup(response.text, 'html.parser')

@@ -1,9 +1,7 @@
-import requests
-import re
 import logging
 from bs4 import BeautifulSoup
 
-from utils.common import push_to_database
+from utils.common import push_to_database, fetch_data
 
 log = logging.getLogger('GardaArms')
 
@@ -21,7 +19,7 @@ def scrapper():
     
     accepted_calibers = ["9 mm", '9x19', '223', '.22 LR', ' 9mm', '9MM', '7,62x39']
     
-    response = requests.get(base_url)
+    response = fetch_data(base_url)
     if response.status_code == 200:
         soup = BeautifulSoup(response.text, 'html.parser')
         number_of_pages = get_number_of_pages(soup)
@@ -29,7 +27,7 @@ def scrapper():
 
     for page in range(1, number_of_pages + 1):
         url = f'{base_url}?sort=1&pageId={page}#products'
-        response = requests.get(url)
+        response = fetch_data(url)
         
         if response.status_code == 200:
             soup = BeautifulSoup(response.text, 'html.parser')
@@ -46,7 +44,7 @@ def scrapper():
                 product_price = product_price.replace(',', '.').replace('zł', '').strip()
                 
                 # get availabiliy
-                availability_response = requests.get(product_link)
+                availability_response = fetch_data(product_link)
                 if availability_response.status_code == 200:
                     availability_soup = BeautifulSoup(availability_response.text, 'html.parser')
                     availability_elem = availability_soup.find('span', class_='productDetails-info--value value')
