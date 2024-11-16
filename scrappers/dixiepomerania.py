@@ -1,15 +1,16 @@
-import requests, re, logging
+import logging
+import re
 
 from bs4 import BeautifulSoup
 
-from utils.common import push_to_database
+from utils.common import push_to_database, fetch_data
 
 log = logging.getLogger('DixiePomerania')
 
 def scrapper():
     url = 'https://dixiepomerania.pl/?page_id=55'
 
-    response = requests.get(url)
+    response = fetch_data(url)
     
     log.info('Stating scrapper.')
     

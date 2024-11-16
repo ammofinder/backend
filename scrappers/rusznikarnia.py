@@ -1,9 +1,7 @@
-import requests
-import re
 import logging
 from bs4 import BeautifulSoup
 
-from utils.common import push_to_database
+from utils.common import push_to_database, fetch_data
 
 log = logging.getLogger('Rusznikarnia')
 
@@ -21,7 +19,7 @@ def scrapper():
     
     accepted_calibers = ['9x19', '9mm', '.223 Rem', '.22 LR', '22LR', '7,62x39', '7,62×39']
     
-    response = requests.get(base_url)
+    response = fetch_data(base_url)
     if response.status_code == 200:
         soup = BeautifulSoup(response.text, 'html.parser')
         number_of_pages = get_number_of_pages(soup)
@@ -29,7 +27,7 @@ def scrapper():
 
     for page in range(1, number_of_pages + 1):
         url = f'{base_url}/page/{page}'
-        response = requests.get(url)
+        response = fetch_data(url)
         
         if response.status_code == 200:
             soup = BeautifulSoup(response.text, 'html.parser')
@@ -47,7 +45,7 @@ def scrapper():
                     product_price = product_price.replace(',', '.').strip()
                     
                 # get availabiliy
-                availability_response = requests.get(product_link)
+                availability_response = fetch_data(product_link)
                 if availability_response.status_code == 200:
                     availability_soup = BeautifulSoup(availability_response.text, 'html.parser')
                     availability_elem = availability_soup.find('div', class_='availability')

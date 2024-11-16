@@ -1,6 +1,8 @@
 import logging
+import requests
 
 from .database import MariaDBManager
+from tenacity import retry, stop_after_attempt, wait_exponential
 
 log = logging.getLogger('common')
 
@@ -45,3 +47,13 @@ def push_to_database(shop, products_list):
     db_manager.disconnect()
     
     return added, updated
+
+def log_retry_attempt(retry_state):
+    attempt_number = retry_state.attempt_number
+    log.info(f"Retry {attempt_number} for URL: {retry_state.args[0]}...")
+
+@retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=2, max=10))
+def fetch_data(url):
+    response = requests.get(url)
+    response.raise_for_status()
+    return response
