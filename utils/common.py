@@ -49,10 +49,9 @@ def push_to_database(shop, products_list):
     return added, updated
 
 def log_retry_attempt(retry_state):
-    attempt_number = retry_state.attempt_number
-    log.info(f"Retry {attempt_number} for URL: {retry_state.args[0]}...")
+    log.info(f"Retry {retry_state.attempt_number} for URL: {retry_state.args[0]}...")
 
-@retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=2, max=10), before=log_retry_attempt)
+@retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=2, max=10), after=log_retry_attempt)
 def fetch_data(url):
     response = requests.get(url)
     response.raise_for_status()
