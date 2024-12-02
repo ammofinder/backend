@@ -33,8 +33,26 @@ def configure_logging():
     # Add process name filter to root logger
     logging.getLogger().addFilter(ProcessNameFilter())
 
+def configure_logging_for_process():
+    """
+    Konfiguruje logowanie indywidualnie dla każdego procesu potomnego.
+    """
+    set_level = logging.INFO
+    logger = logging.getLogger()
+    logger.handlers.clear()
+    
+    stream_handler = logging.StreamHandler(sys.stdout)
+    formatter = logging.Formatter(
+        "%(asctime)s [%(levelname)s] [%(processName)s] [%(name)s] %(message)s"
+    )
+    stream_handler.setFormatter(formatter)
+    logger.addHandler(stream_handler)
+    logger.setLevel(set_level)
+
+    logger.addFilter(ProcessNameFilter())
+
 def run_scraper(scraper_function, config):
-    configure_logging()
+    configure_logging_for_process()
     log = logging.getLogger(scraper_function.__module__)
     
     try:
@@ -45,7 +63,6 @@ def run_scraper(scraper_function, config):
         log.error(f"Error in scraper {scraper_function.__module__}: {e}")
 
 def main():
-    
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", help="path to the configuration file", required=True)
     args = parser.parse_args()
@@ -54,11 +71,11 @@ def main():
         with open(args.config, encoding='utf-8') as f:
             config = yaml.safe_load(f)
     except FileNotFoundError:
-        sys.exit("ERROR: config.yaml file not found. Create one reffering to README.")
+        sys.exit("ERROR: config.yaml file not found. Create one referring to README.")
     except yaml.YAMLError:
         sys.exit("ERROR: Error while loading config.yaml file.")
         
-    configure_logging()    
+    configure_logging()
     log = logging.getLogger('runner')
     
     log.info('Starting!')
@@ -71,18 +88,17 @@ def main():
         (tarcza.run, config),
     ]
     
-    # Create and start processes
     processes = []
     for scraper_function, scraper_config in scrapers:
         process = Process(target=run_scraper, args=(scraper_function, scraper_config))
         processes.append(process)
         process.start()
     
-    # Wait for all processes to finish
     for process in processes:
         process.join()
     
     log.info('Finished!')
+
 
 if __name__ == '__main__':
     main()
