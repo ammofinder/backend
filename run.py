@@ -1,11 +1,10 @@
 import argparse
 import logging
-import io
 import sys
 import yaml
 
 import multiprocessing
-from multiprocessing import Process, current_process
+from multiprocessing import current_process
 
 from scrappers import dixiepomerania, gardaarms, rusznikarnia, arel, tarcza
 
@@ -94,8 +93,6 @@ def main():
         process.join()
 
     log.info('Finished!')
-
-
 
 if __name__ == '__main__':
     main()

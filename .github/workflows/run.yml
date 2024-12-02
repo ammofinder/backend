@@ -11,7 +11,7 @@
     
     jobs:
       run:
-        name: verify
+        name: Ubuntu22 Python3.11
         runs-on: ubuntu-22.04
     
         permissions:
