@@ -33,13 +33,13 @@ def configure_logging():
     # Add process name filter to root logger
     logging.getLogger().addFilter(ProcessNameFilter())
 
-def run_scraper(scraper_function):
+def run_scraper(scraper_function, config):
     configure_logging()
     log = logging.getLogger(scraper_function.__module__)
     
     try:
         log.info(f"Starting scraper: {scraper_function.__module__}")
-        scraper_function()
+        scraper_function(config)
         log.info(f"Finished scraper: {scraper_function.__module__}")
     except Exception as e:
         log.error(f"Error in scraper {scraper_function.__module__}: {e}")
@@ -63,16 +63,18 @@ def main():
     
     log.info('Starting!')
     
-    scrapers = [dixiepomerania.run(config), 
-                gardaarms.run(config), 
-                rusznikarnia.run(config), 
-                arel.run(config), 
-                tarcza.run(config)]
+    scrapers = [
+        (dixiepomerania.run, config),
+        (gardaarms.run, config),
+        (rusznikarnia.run, config),
+        (arel.run, config),
+        (tarcza.run, config),
+    ]
     
     # Create and start processes
     processes = []
-    for scraper in scrapers:
-        process = Process(target=run_scraper, args=(scraper, ))
+    for scraper_function, scraper_config in scrapers:
+        process = Process(target=run_scraper, args=(scraper_function, scraper_config))
         processes.append(process)
         process.start()
     
