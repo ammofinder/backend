@@ -88,8 +88,8 @@ def scrapper():
     log.info('Items meeting criteria: %s', len(products))
     return products
 
-def run():
+def run(config):
     products_tarcza = scrapper()
-    new, updated = push_to_database('Tarcza', products_tarcza)
+    new, updated = push_to_database('Tarcza', products_tarcza, config)
     
     log.info('New: %s, Updated: %s', new, updated)

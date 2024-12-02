@@ -1,10 +1,12 @@
-from scrappers import dixiepomerania, gardaarms, rusznikarnia, arel, tarcza
-
+import argparse
 import logging
 import io
 import sys
+import yaml
+
 from multiprocessing import Process, current_process
 
+from scrappers import dixiepomerania, gardaarms, rusznikarnia, arel, tarcza
 
 class ProcessNameFilter(logging.Filter):
     def filter(self, record):
@@ -42,18 +44,30 @@ def run_scraper(scraper_function):
     except Exception as e:
         log.error(f"Error in scraper {scraper_function.__module__}: {e}")
 
-if __name__ == '__main__':
+def main():
     
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--config", help="path to the configuration file", required=True)
+    args = parser.parse_args()
+    
+    try:
+        with open(args.config, encoding='utf-8') as f:
+            config = yaml.safe_load(f)
+    except FileNotFoundError:
+        sys.exit("ERROR: config.yaml file not found. Create one reffering to README.")
+    except yaml.YAMLError:
+        sys.exit("ERROR: Error while loading config.yaml file.")
+        
     configure_logging()    
     log = logging.getLogger('runner')
     
     log.info('Starting!')
     
-    scrapers = [dixiepomerania.run, 
-                gardaarms.run, 
-                rusznikarnia.run, 
-                arel.run, 
-                tarcza.run]
+    scrapers = [dixiepomerania.run(config), 
+                gardaarms.run(config), 
+                rusznikarnia.run(config), 
+                arel.run(config), 
+                tarcza.run(config)]
     
     # Create and start processes
     processes = []
@@ -67,3 +81,6 @@ if __name__ == '__main__':
         process.join()
     
     log.info('Finished!')
+
+if __name__ == '__main__':
+    main()
