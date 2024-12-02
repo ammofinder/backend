@@ -26,12 +26,12 @@ def configure_logging():
     wrapped_stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
     stream_handler.setStream(wrapped_stdout)
     
-    logger = logging.getLogger()
-    logger.handlers.clear()
-    logger.addHandler(stream_handler)
-    logger.setLevel(set_level)
+    logging.basicConfig(
+        level=set_level,
+        handlers=[stream_handler]
+    )
     # Add process name filter to root logger
-    logger.addFilter(ProcessNameFilter())
+    logging.getLogger().addFilter(ProcessNameFilter())
 
 def run_scraper(scraper_function, config):
     configure_logging()
