@@ -18,7 +18,7 @@ class MariaDBManager:
             self.user = config['database']['user']
             self.password = config['database']['password']
             self.database = config['database']['db']
-            self.table = config['database']['db']
+            self.table = config['database']['table']
             self.connection = None
             self.cursor = None
         except Exception as e:
