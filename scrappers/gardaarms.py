@@ -86,8 +86,8 @@ def scrapper():
     log.info('Items meeting criteria: %s', len(products))
     return products
 
-def run():
+def run(config):
     products_garda = scrapper()
-    new, updated = push_to_database('GardaArms', products_garda)
+    new, updated = push_to_database('GardaArms', products_garda, config)
     
     log.info('New: %s, Updated: %s', new, updated)

@@ -7,8 +7,8 @@ from tenacity import retry, stop_after_attempt, wait_exponential
 log = logging.getLogger('common')
 
 
-def push_to_database(shop, products_list):
-    db_manager = MariaDBManager()
+def push_to_database(shop, products_list, config):
+    db_manager = MariaDBManager(config)
     db_manager.connect()
     
     added, updated = 0, 0

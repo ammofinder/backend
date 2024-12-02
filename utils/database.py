@@ -2,29 +2,30 @@ from datetime import datetime
 import logging
 import sys
 
-import yaml
+from tenacity import retry, wait_incrementing, stop_after_attempt
 import mariadb
 
 log = logging.getLogger('mariadb')
 
+def log_attempt_number(retry_state):
+    """return the result of the last call attempt"""
+    log.info('Connecting to MariaDB database failed, retry attempt: %s...', retry_state.attempt_number)
 class MariaDBManager:
-    def __init__(self):
+    def __init__(self, config):
         try:
-            with open("config.yaml", encoding='utf-8') as f:
-                config = yaml.safe_load(f)
-        
             self.host = config['database']['host']
             self.port = config['database']['port']
             self.user = config['database']['user']
             self.password = config['database']['password']
             self.database = config['database']['db']
-            self.table = config['database']['db']
+            self.table = config['database']['table']
             self.connection = None
             self.cursor = None
         except Exception as e:
             log.error('Cannot load configuration file. %s', e)
             sys.exit(1)
 
+    @retry(stop=stop_after_attempt(3), wait=wait_incrementing(start=5, increment=10), after=log_attempt_number)
     def connect(self):
         try:
             self.connection = mariadb.Connection(

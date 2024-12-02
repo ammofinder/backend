@@ -85,8 +85,8 @@ def scrapper():
     log.info('Items meeting criteria: %s', len(products))
     return products
 
-def run():
+def run(config):
     products_rusznikarnia = scrapper()
-    new, updated = push_to_database('Rusznikarnia', products_rusznikarnia)
+    new, updated = push_to_database('Rusznikarnia', products_rusznikarnia, config)
     
     log.info('New: %s, Updated: %s', new, updated)

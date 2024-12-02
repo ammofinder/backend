@@ -63,8 +63,8 @@ def scrapper():
     else:
         log.error("Error during data collection: %s", response.status_code)
 
-def run():
+def run(config):
     products_dixie = scrapper()
-    new, updated = push_to_database('Dixie', products_dixie)
+    new, updated = push_to_database('Dixie', products_dixie, config)
     
     log.info('New: %s, Updated: %s', new, updated)

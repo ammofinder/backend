@@ -1,0 +1,84 @@
+---
+    name: Run
+    
+    on:
+      push:
+        branches: [ "master" ]
+      pull_request:
+        branches: [ "master" ]
+    
+    permissions: read-all
+    
+    jobs:
+      run:
+        name: Ubuntu22 Python3.11
+        runs-on: ubuntu-22.04
+    
+        permissions:
+          contents: read
+          issues: write
+          packages: read
+          statuses: write
+    
+        steps:
+        - name: Install OS packages (Ubuntu)
+          run: |
+            sudo apt install -y --no-install-recommends libmariadb3 libmariadb-dev
+
+        - name: Checkout
+          uses: actions/checkout@v4
+
+        - name: Setup python 3.11
+          uses: actions/setup-python@v5
+          with:
+              python-version: '3.11'
+
+        - name: Cache setup
+          uses: actions/cache@v4
+          with:
+            path: .venv
+            key: venv-${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+            restore-keys: |
+              venv-${{ runner.os }}-pip-
+
+        - name: Install python requirements
+          run: |
+            python -m venv .venv
+            source .venv/bin/activate
+            python -m pip install -r requirements.txt
+            echo "$VIRTUAL_ENV/bin" >> $GITHUB_PATH
+            echo "VIRTUAL_ENV=$VIRTUAL_ENV" >> $GITHUB_ENV
+
+        - name: Setup mariadb container
+          run: |
+            docker pull mariadb:latest && \
+            docker run --name mariadb --rm -d -p 3306:3306 \
+            -e MYSQL_ROOT_PASSWORD=root \
+            --health-cmd="healthcheck.sh --connect --innodb_initialized" \
+            --health-interval=10s \
+            --health-timeout=5s --health-retries=3 \
+            mariadb:latest
+    
+        - name: Wait until mariadb container is healthy
+          uses: raschmitt/wait-for-healthy-container/@master
+          with:
+            container-name: mariadb
+            timeout: 120
+    
+        - name: Initialize MariaDB with SQL script
+          run: |
+            echo "Initialize database -> pushing initialize_db.sql to MariaDB instance."
+            docker exec -i mariadb mariadb -uroot -proot < .github/configs/initialize_db.sql
+            echo "Show databases ->"
+            docker exec mariadb mariadb --table -e "SHOW DATABASES;" -uroot -proot | column -t -s $'\t'
+            echo "Describe example_table ->"
+            docker exec mariadb mariadb --table -e "USE example_database; DESCRIBE example_table;" -uroot -proot | column -t -s $'\t'
+    
+        - name: Run scrappers
+          run: |
+            python run.py --config .github/configs/config.yaml
+
+        - name: Verify database update
+          run: |
+            echo "Show content of example_table ->"
+            docker exec mariadb mariadb -e "USE example_database; SELECT * FROM example_table;" -uroot -proot | column -t -s $'\t'

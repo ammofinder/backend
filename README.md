@@ -1,4 +1,4 @@
-# amunicja_pomorskie_backend
+# ammofinder backend
 
 Backend for scraping information from stores. It's not even alpha :)
 
@@ -60,7 +60,7 @@ venv\bin\activate
 
 python -m pip install -r requirements.txt
 
-python run.py
+python run.py --config config.yaml
 ```
 
-More info: https://github.com/wkobiela/dobroni_pomorskie_frontend
+More info: [ammofinder/frontend](https://github.com/ammofinder/frontend)

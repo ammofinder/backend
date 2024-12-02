@@ -94,8 +94,8 @@ def scrapper():
     log.info('Items meeting criteria: %s', len(products))
     return products
 
-def run():
+def run(config):
     products_arel = scrapper()
-    new, updated = push_to_database('Arel', products_arel)
+    new, updated = push_to_database('Arel', products_arel, config)
     
     log.info('New: %s, Updated: %s', new, updated)
