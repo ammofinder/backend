@@ -12,7 +12,7 @@
     jobs:
       run:
         name: verify
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-22.04
     
         permissions:
           contents: read
@@ -38,7 +38,6 @@
           with:
             path: .venv
             key: venv-${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-            save-always: true
             restore-keys: |
               venv-${{ runner.os }}-pip-
 
