@@ -43,7 +43,6 @@
             save-always: true
             restore-keys: |
               venv-${{ runner.os }}-pip-
-                    
 
         - name: Install python requirements
           run: |
@@ -77,13 +76,15 @@
             docker exec mariadb mariadb --table -e "SHOW DATABASES;" -uroot -proot | column -t -s $'\t'
             echo "Describe example_table ->"
             docker exec mariadb mariadb --table -e "USE example_database; DESCRIBE example_table;" -uroot -proot | column -t -s $'\t'
-            echo "Show content of example_table ->"
-            docker exec mariadb mariadb -e "USE example_database; SELECT * FROM example_table;" -uroot -proot | column -t -s $'\t'
-            echo "Get mariadb hostname IP address ->"
-            DB_HOST=$(docker exec mariadb hostname -I | awk '{print $1}')
-            echo "DB_HOST=$DB_HOST" >> "$GITHUB_ENV"
-            echo "DB_HOST=$DB_HOST"
+            
+        - name: Show files
+          run: pwd && ls -ll
     
         - name: Run scrappers
           run: |
             python run.py --config .github/configs/config.yaml
+
+        - name: Verify database update
+          run: |
+            echo "Show content of example_table ->"
+            docker exec mariadb mariadb -e "USE example_database; SELECT * FROM example_table;" -uroot -proot | column -t -s $'\t'
