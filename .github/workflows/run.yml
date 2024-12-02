@@ -1,5 +1,5 @@
 ---
-    name: Docker
+    name: Run
     
     on:
       push:
@@ -11,7 +11,7 @@
     
     jobs:
       run:
-        name: Run scrappers
+        name: verify
         runs-on: ubuntu-latest
     
         permissions:
@@ -76,9 +76,6 @@
             docker exec mariadb mariadb --table -e "SHOW DATABASES;" -uroot -proot | column -t -s $'\t'
             echo "Describe example_table ->"
             docker exec mariadb mariadb --table -e "USE example_database; DESCRIBE example_table;" -uroot -proot | column -t -s $'\t'
-            
-        - name: Show files
-          run: pwd && ls -ll
     
         - name: Run scrappers
           run: |
