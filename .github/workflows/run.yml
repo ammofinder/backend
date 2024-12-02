@@ -21,6 +21,12 @@
           statuses: write
     
         steps:
+        - name: Install OS packages (Ubuntu)
+          run: |
+            sudo apt install -y libmariadb3 libmariadb-dev ttf-mscorefonts-installer gnome-screenshot
+            sudo fc-cache -f
+            fc-match Arial
+
         - name: Checkout
           uses: actions/checkout@v4
 
