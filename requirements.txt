@@ -1,5 +1,5 @@
 beautifulsoup4==4.13.3
-mariadb==1.1.11
+mariadb==1.1.12
 PyYAML==6.0.2
 requests==2.32.3
 tenacity==9.0.0
