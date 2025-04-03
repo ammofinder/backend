@@ -23,6 +23,7 @@
         steps:
         - name: Install OS packages (Ubuntu)
           run: |
+            sudo apt update
             sudo apt install -y --no-install-recommends libmariadb3 libmariadb-dev
 
         - name: Checkout
