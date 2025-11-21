@@ -27,7 +27,7 @@
             sudo apt install -y --no-install-recommends libmariadb3 libmariadb-dev
 
         - name: Checkout
-          uses: actions/checkout@v5
+          uses: actions/checkout@v6
 
         - name: Setup python 3.11
           uses: actions/setup-python@v6
